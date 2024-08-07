@@ -11,14 +11,12 @@ public class ProductResponseDto {
     private Long id;
     private String name;
     private Integer supplyPrice;
-    private String createdBy;
 
     @Builder(access = AccessLevel.PRIVATE)
-    private ProductResponseDto(Long id, String name, Integer supplyPrice, String createdBy) {
+    private ProductResponseDto(Long id, String name, Integer supplyPrice) {
         this.id = id;
         this.name = name;
         this.supplyPrice = supplyPrice;
-        this.createdBy = createdBy;
     }
 
     public static ProductResponseDto entityToDto(Product product) {
@@ -27,7 +25,6 @@ public class ProductResponseDto {
                 .id(product.getId())
                 .name(product.getName())
                 .supplyPrice(product.getSupplyPrice())
-                .createdBy(product.getCreatedBy())
                 .build();
     }
 }

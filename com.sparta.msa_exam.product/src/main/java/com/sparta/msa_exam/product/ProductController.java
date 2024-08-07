@@ -1,6 +1,8 @@
 package com.sparta.msa_exam.product;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -19,6 +21,18 @@ public class ProductController {
     public ProductResponseDto createProduct(@RequestBody ProductRequestDto request, String userId) {
 
         return productService.createProduct(request, userId);
+    }
+
+    /**
+     *
+     * @param request 검색 조건 , 정렬 기준
+     */
+    @GetMapping
+    public Page<ProductResponseDto> getProducts(ProductSearchDto request, Pageable pageable) {
+        System.out.println(request.getName());
+        System.out.println(request.getMaxPrice());
+        System.out.println(request.getMinPrice());
+        return productService.getProducts(request, pageable);
     }
 
 }
