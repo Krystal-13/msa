@@ -5,6 +5,7 @@ import lombok.Getter;
 @Getter
 public class ProductRequestDto {
 
-    String name;
-    Integer supplyPrice;
+    private String name;
+    private Integer supplyPrice;
+    private Integer quantity;
 }

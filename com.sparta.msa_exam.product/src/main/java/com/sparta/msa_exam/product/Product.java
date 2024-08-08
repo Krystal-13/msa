@@ -19,14 +19,16 @@ public class Product extends BaseEntity{
     private Long id;
     private String name;
     private Integer supplyPrice;
+    private Integer stockQuantity;
     private String createdBy;
     private String updatedBy;
     private String deletedBy;
 
     @Builder(access = AccessLevel.PRIVATE)
-    private Product(String name, Integer supplyPrice, String createdBy, String updatedBy, String deletedBy) {
+    private Product(String name, Integer supplyPrice, Integer stockQuantity, String createdBy, String updatedBy, String deletedBy) {
         this.name = name;
         this.supplyPrice = supplyPrice;
+        this.stockQuantity = stockQuantity;
         this.createdBy = createdBy;
         this.updatedBy = updatedBy;
         this.deletedBy = deletedBy;
@@ -36,7 +38,12 @@ public class Product extends BaseEntity{
         return Product.builder()
                 .name(request.getName())
                 .supplyPrice(request.getSupplyPrice())
+                .stockQuantity(request.getQuantity())
                 .createdBy(userId)
                 .build();
+    }
+
+    public void reduceStock(int quantity) {
+        this.stockQuantity = this.stockQuantity - quantity;
     }
 }
