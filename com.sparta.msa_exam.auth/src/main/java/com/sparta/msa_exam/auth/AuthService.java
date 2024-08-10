@@ -20,7 +20,7 @@ public class AuthService {
     @Value("${spring.application.name}")
     private String issuer;
 
-    @Value("${service.jwt.access-expiration}")
+    @Value("${jwt.access-expiration}")
     private Long accessExpiration;
 
     private final JwtEncoder encoder;
