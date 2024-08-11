@@ -4,10 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -17,17 +14,31 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/signIn")
-    public ResponseEntity<AuthResponse> signIn(@RequestBody SignInRequest signInRequest) {
-        String token = authService.signIn(signInRequest.getUsername(), signInRequest.getPassword());
+    public ResponseEntity<AuthResponse> signIn(
+            @RequestBody SignInRequest signInRequest
+    ) {
+        String token = authService.signIn(
+                signInRequest.getUsername(), signInRequest.getPassword());
         return ResponseEntity.ok(new AuthResponse(token));
     }
 
 
     @PostMapping("/signUp")
-    public ResponseEntity<UserResponseDto> signUp(@RequestBody SignUpRequest signUpRequest) {
+    public ResponseEntity<UserResponseDto> signUp(
+            @RequestBody SignUpRequest signUpRequest
+    ) {
         UserResponseDto userResponseDto = authService.signUp(
                 signUpRequest.getUsername(), signUpRequest.getPassword());
         return ResponseEntity.ok(userResponseDto);
+    }
+
+    @PostMapping("/users/validate")
+    public ResponseEntity<Boolean> validateUserWithRole(
+            @RequestBody AuthenticationDetails details
+    ) {
+        boolean userExists = authService.validateUserWithRole(
+                details.getUserId(), details.getRole());
+        return ResponseEntity.ok(userExists);
     }
 
     @Getter

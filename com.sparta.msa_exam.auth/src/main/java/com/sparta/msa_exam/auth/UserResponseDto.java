@@ -24,8 +24,7 @@ public class UserResponseDto {
         return UserResponseDto.builder()
                 .id(user.getId())
                 .username(user.getUsername())
-                .role(user.getRole())
+                .role(String.valueOf(user.getRole()))
                 .build();
     }
 }
-

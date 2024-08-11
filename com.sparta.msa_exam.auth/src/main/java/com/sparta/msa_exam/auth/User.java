@@ -1,9 +1,6 @@
 package com.sparta.msa_exam.auth;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -19,10 +16,11 @@ public class User {
     private Long id;
     private String username;
     private String password;
-    private String role;
+    @Enumerated(EnumType.STRING)
+    private UserRole role;
 
     @Builder(access = AccessLevel.PRIVATE)
-    public User(String username, String password, String role) {
+    public User(String username, String password, UserRole role) {
         this.username = username;
         this.password = password;
         this.role = role;
@@ -32,6 +30,7 @@ public class User {
         return User.builder()
                 .username(username)
                 .password(encodedPassword)
+                .role(UserRole.ROLE_USER)
                 .build();
     }
 }

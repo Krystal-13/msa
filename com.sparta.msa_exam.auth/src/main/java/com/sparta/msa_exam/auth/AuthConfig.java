@@ -38,6 +38,7 @@ public class AuthConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/auth/signIn").permitAll()
                         .requestMatchers("/auth/signUp").permitAll()
+                        .requestMatchers(("/auth/users/validate")).permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session
@@ -51,6 +52,7 @@ public class AuthConfig {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
     @Bean
     JwtEncoder jwtEncoder() {
         JWK jwk = new RSAKey.Builder(this.key).privateKey(this.priv).build();
