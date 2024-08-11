@@ -33,22 +33,15 @@ public class OrderItem {
         this.quantity = quantity;
     }
 
-    public static List<OrderItem> createOrderItems(Order order, List<OrderItemDto> orderItemDtos) {
+    public static OrderItem createOrderItem(Order order, OrderItemDto orderItemDto) {
+        return OrderItem.builder()
+                .order(order)
+                .productId(orderItemDto.getProductId())
+                .quantity(orderItemDto.getQuantity())
+                .build();
+    }
 
-        if (orderItemDtos.isEmpty()) {
-            return Collections.emptyList();
-        }
-
-        List<OrderItem> orderItems = new ArrayList<>();
-        for(OrderItemDto orderItemDto : orderItemDtos) {
-            OrderItem orderItem = OrderItem.builder()
-                    .order(order)
-                    .productId(orderItemDto.getProductId())
-                    .quantity(orderItemDto.getQuantity())
-                    .build();
-            orderItems.add(orderItem);
-        }
-
-        return orderItems;
+    public void increaseOrderItemQuantity(int quantity) {
+        this.quantity += quantity;
     }
 }

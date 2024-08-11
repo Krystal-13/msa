@@ -8,7 +8,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -22,19 +24,24 @@ public class OrderService {
     @Transactional
     public OrderResponseDto createOrder(OrderRequestDto request, String userId) {
 
-        //TODO 사용자 검증 로직
-
         List<OrderItemDto> orderItemDtos = request.getOrderItems();
-        isStockAvailable(orderItemDtos);
-        reduceStock(orderItemDtos);
-        //TODO 중간에 하나라도 감량처리가 안되었을 경우 핸들링
+        List<ProductResponseDto> products = productClient.getProducts();
+        List<Long> list = products.stream().map(ProductResponseDto::getId).toList();
 
         Order order = Order.createOrder(userId);
         Order savedOrder = orderRepository.save(order);
+        List<OrderItem> orderItems = new ArrayList<>();
 
-        List<OrderItem> orderItems = OrderItem.createOrderItems(savedOrder, request.getOrderItems());
+        for (OrderItemDto orderItemDto : orderItemDtos) {
+            if (list.contains(orderItemDto.getProductId())) {
+                orderItems.add(OrderItem.createOrderItem(savedOrder, orderItemDto));
+            } else {
+                log.info("Product not found");
+                //TODO 상품이 존재하지 않을 경우 처리 로직
+            }
+        }
+
         orderItemRepository.saveAll(orderItems);
-
         order.addOrderItems(orderItems);
 
         return OrderResponseDto.entityToDto(savedOrder);
@@ -43,8 +50,6 @@ public class OrderService {
     @Transactional(readOnly = true)
     public OrderResponseDto getOrder(Long orderId, String userId) {
 
-        //TODO 사용자 검증 로직
-
         Order order = getOrder(orderId);
         validateOrderUser(userId, order);
 
@@ -52,50 +57,60 @@ public class OrderService {
     }
 
     @Transactional
-    public OrderResponseDto updateOrder(Long orderId, OrderRequestDto request, String userId) {
+    public OrderResponseDto updateOrder(
+            Long orderId, OrderRequestDto request, String userId
+    ) {
 
         Order order = getOrder(orderId);
         validateOrderUser(userId, order);
 
         List<OrderItemDto> orderItemDtos = request.getOrderItems();
-        isStockAvailable(orderItemDtos);
-        reduceStock(orderItemDtos);
-        //TODO 중간에 하나라도 감량처리가 안되었을 경우 핸들링
 
-        List<OrderItem> orderItems = OrderItem.createOrderItems(order, request.getOrderItems());
-        order.updateOrder(orderItems, userId, OrderStatus.valueOf(request.getStatus()));
-        Order updatedOrder = orderRepository.save(order);
+        List<ProductResponseDto> productResponseDtos = productClient.getProducts();
+        List<Long> list =
+                productResponseDtos.stream().map(ProductResponseDto::getId).toList();
 
-        return OrderResponseDto.entityToDto(updatedOrder);
+        for (OrderItemDto orderItemDto : orderItemDtos) {
+            if (list.contains(orderItemDto.getProductId())) {
+                Optional<OrderItem> optionalOrderItem =
+                        orderItemRepository.findByProductIdAndOrder(
+                                orderItemDto.getProductId(), order
+                        );
+
+                if (optionalOrderItem.isEmpty()) {
+                    OrderItem orderItem = OrderItem.createOrderItem(order, orderItemDto);
+                    OrderItem savedOrderItem = orderItemRepository.save(orderItem);
+                    order.getOrderItems().add(savedOrderItem);
+                } else {
+                    optionalOrderItem.get()
+                            .increaseOrderItemQuantity(orderItemDto.getQuantity());
+                }
+
+            } else {
+                log.info("Product not found");
+                //TODO 상품이 존재하지 않을 경우 처리 로직
+            }
+        }
+
+        return OrderResponseDto.entityToDto(order);
     }
 
     private Order getOrder(Long orderId) {
 
         return orderRepository.findById(orderId)
-                .filter(o -> o.getDeletedAt() == null)
                 .orElseThrow(() ->
                         new ResponseStatusException(
-                                HttpStatus.NOT_FOUND, "Order not found or has been deleted"));
+                                HttpStatus.NOT_FOUND,
+                                "Order not found or has been deleted"
+                        ));
     }
 
     private static void validateOrderUser(String userId, Order order) {
         if (!order.getUserId().equals(userId)) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized access to the order");
-        }
-    }
-
-    private void isStockAvailable(List<OrderItemDto> orderItemDtos) {
-        for (OrderItemDto orderItem : orderItemDtos) {
-            ProductResponseDto product = productClient.getProduct(orderItem.getProductId());
-            if (product.getQuantity() < orderItem.getQuantity()) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Product with ID " + product.getId() + " is out of stock.");
-            }
-        }
-    }
-
-    private void reduceStock(List<OrderItemDto> orderItemDtos) {
-        for (OrderItemDto orderItemDto : orderItemDtos) {
-            productClient.reduceProductStock(orderItemDto.getProductId(), orderItemDto.getQuantity());
+            throw new ResponseStatusException(
+                    HttpStatus.UNAUTHORIZED,
+                    "Unauthorized access to the order"
+            );
         }
     }
 }

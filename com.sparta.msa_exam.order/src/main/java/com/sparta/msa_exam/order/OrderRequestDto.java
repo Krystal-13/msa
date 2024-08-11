@@ -8,6 +8,4 @@ import java.util.List;
 public class OrderRequestDto {
 
     private List<OrderItemDto> orderItems;
-
-    private String status;
 }
