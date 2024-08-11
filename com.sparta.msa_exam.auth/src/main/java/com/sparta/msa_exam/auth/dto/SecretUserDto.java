@@ -1,5 +1,7 @@
-package com.sparta.msa_exam.auth;
+package com.sparta.msa_exam.auth.dto;
 
+import com.sparta.msa_exam.auth.User;
+import com.sparta.msa_exam.auth.UserRole;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;

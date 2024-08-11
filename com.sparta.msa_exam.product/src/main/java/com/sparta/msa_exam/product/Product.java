@@ -1,5 +1,6 @@
 package com.sparta.msa_exam.product;
 
+import com.sparta.msa_exam.product.dto.ProductRequestDto;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;

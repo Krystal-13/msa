@@ -1,5 +1,6 @@
 package com.sparta.msa_exam.auth;
 
+import com.sparta.msa_exam.auth.dto.SecretUserDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;

@@ -1,5 +1,6 @@
 package com.sparta.msa_exam.auth;
 
+import com.sparta.msa_exam.auth.dto.SecretUserDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;

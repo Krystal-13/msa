@@ -1,13 +1,10 @@
 package com.sparta.msa_exam.order;
 
+import com.sparta.msa_exam.order.dto.OrderItemDto;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 @Entity
 @Getter

@@ -1,5 +1,6 @@
 package com.sparta.msa_exam.auth;
 
+import com.sparta.msa_exam.auth.dto.UserResponseDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

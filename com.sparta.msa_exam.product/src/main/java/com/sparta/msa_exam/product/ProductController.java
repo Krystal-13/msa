@@ -1,5 +1,7 @@
 package com.sparta.msa_exam.product;
 
+import com.sparta.msa_exam.product.dto.ProductRequestDto;
+import com.sparta.msa_exam.product.dto.ProductResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
