@@ -10,12 +10,18 @@ spring:
     username: root
     password: password
   jpa:
-    show-sql: false
+    show-sql: true
     hibernate:
       ddl-auto: update
     properties:
       hibernate:
         format_sql: true
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      password: systempass
+      username: default
 
 eureka:
   client:
