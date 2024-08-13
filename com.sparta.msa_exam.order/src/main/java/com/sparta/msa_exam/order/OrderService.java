@@ -6,6 +6,7 @@ import com.sparta.msa_exam.order.dto.OrderResponseDto;
 import com.sparta.msa_exam.product.dto.ProductResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -51,6 +52,7 @@ public class OrderService {
     }
 
     @Transactional(readOnly = true)
+    @Cacheable(cacheNames = "order", key = "args[0]")
     public OrderResponseDto getOrder(Long orderId, String userId) {
 
         Order order = getOrder(orderId);
@@ -61,32 +63,32 @@ public class OrderService {
 
     @Transactional
     public OrderResponseDto updateOrder(
-            Long orderId, OrderRequestDto request, String userId
+            Long orderId, OrderRequestDto orderRequest, String userId
     ) {
 
         Order order = getOrder(orderId);
         validateOrderUser(userId, order);
 
-        List<OrderItemDto> orderItemDtos = request.getOrderItems();
+        List<OrderItemDto> requestOrderItems = orderRequest.getOrderItems();
 
         List<ProductResponseDto> productResponseDtos = productClient.getProducts();
         List<Long> list =
                 productResponseDtos.stream().map(ProductResponseDto::getId).toList();
 
-        for (OrderItemDto orderItemDto : orderItemDtos) {
-            if (list.contains(orderItemDto.getProductId())) {
+        for (OrderItemDto requestOrderItem : requestOrderItems) {
+            if (list.contains(requestOrderItem.getProductId())) {
                 Optional<OrderItem> optionalOrderItem =
                         orderItemRepository.findByProductIdAndOrder(
-                                orderItemDto.getProductId(), order
+                                requestOrderItem.getProductId(), order
                         );
 
                 if (optionalOrderItem.isEmpty()) {
-                    OrderItem orderItem = OrderItem.createOrderItem(order, orderItemDto);
+                    OrderItem orderItem = OrderItem.createOrderItem(order, requestOrderItem);
                     OrderItem savedOrderItem = orderItemRepository.save(orderItem);
                     order.getOrderItems().add(savedOrderItem);
                 } else {
                     optionalOrderItem.get()
-                            .increaseOrderItemQuantity(orderItemDto.getQuantity());
+                            .increaseOrderItemQuantity(requestOrderItem.getQuantity());
                 }
 
             } else {
