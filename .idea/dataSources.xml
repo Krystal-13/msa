@@ -8,5 +8,19 @@
       <jdbc-url>jdbc:mysql://localhost:3306/msa_exam</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
+    <data-source source="LOCAL" name="msa_exam@msa-exam.c6l5wqhz43hp.us-east-1.rds.amazonaws.com" uuid="327d2063-8f27-41a7-b68e-7d3913ef3b39">
+      <driver-ref>mysql.8</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
+      <jdbc-url>jdbc:mysql://msa-exam.c6l5wqhz43hp.us-east-1.rds.amazonaws.com:3306/msa_exam</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
+    <data-source source="LOCAL" name="@localhost" uuid="3d1d2a7b-09f8-421a-a4bf-eced281f442a">
+      <driver-ref>redis</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>jdbc.RedisDriver</jdbc-driver>
+      <jdbc-url>jdbc:redis://localhost:6379/</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
   </component>
 </project>
