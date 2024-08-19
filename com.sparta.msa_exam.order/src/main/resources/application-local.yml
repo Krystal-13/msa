@@ -22,6 +22,20 @@ spring:
       port: 6379
       password: systempass
       username: default
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+
+messaging:
+  exchanges:
+    default: msa.exam
+    error: msa.exam.error
+  queues:
+    product: msa.exam.product
+    orderError: msa.exam.error.order
+
 
 eureka:
   client:

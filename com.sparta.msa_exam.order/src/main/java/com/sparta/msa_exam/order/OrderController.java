@@ -18,7 +18,6 @@ public class OrderController {
     public OrderResponseDto createOrder(
             @RequestBody OrderRequestDto request, Principal principal
     ) {
-
         return orderService.createOrder(request, principal.getName());
     }
 
@@ -26,7 +25,6 @@ public class OrderController {
     public OrderResponseDto getOrder(
             @PathVariable("orderId") Long orderId, Principal principal
     ) {
-
         return orderService.getOrder(orderId, principal.getName());
     }
 
@@ -35,7 +33,6 @@ public class OrderController {
             @PathVariable("orderId") Long orderId,
             @RequestBody OrderRequestDto requestDto, Principal principal
     ) {
-
         return orderService.updateOrder(orderId, requestDto, principal.getName());
     }
 }

@@ -6,6 +6,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Getter
 @NoArgsConstructor
@@ -20,7 +23,6 @@ public class OrderItem {
     private Order order;
 
     private Long productId;
-
     private Integer quantity;
 
     @Builder
@@ -36,6 +38,16 @@ public class OrderItem {
                 .productId(orderItemDto.getProductId())
                 .quantity(orderItemDto.getQuantity())
                 .build();
+    }
+
+    public static List<OrderItem> createOrderItems(Order order, List<OrderItemDto> orderItemDtos) {
+        List<OrderItem> orderItems = new ArrayList<>();
+
+        for (OrderItemDto orderItemDto : orderItemDtos) {
+            orderItems.add(createOrderItem(order, orderItemDto));
+        }
+
+        return orderItems;
     }
 
     public void increaseOrderItemQuantity(int quantity) {

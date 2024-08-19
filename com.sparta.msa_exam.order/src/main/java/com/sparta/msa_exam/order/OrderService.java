@@ -8,13 +8,14 @@ import com.sparta.msa_exam.order.dto.OrderResponseDto;
 import com.sparta.msa_exam.product.dto.ProductResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,32 +24,26 @@ import java.util.Optional;
 @Slf4j
 public class OrderService {
 
+    @Value("${messaging.queues.product}")
+    private String queueProduct;
+
     private final OrderRepository orderRepository;
     private final OrderItemRepository orderItemRepository;
     private final ProductClient productClient;
+    private final RabbitTemplate rabbitTemplate;
 
     @Transactional
     public OrderResponseDto createOrder(OrderRequestDto request, String userId) {
 
-        List<OrderItemDto> orderItemDtos = request.getOrderItems();
-        List<ProductResponseDto> products = productClient.getProducts();
-        List<Long> list = products.stream().map(ProductResponseDto::getId).toList();
-
         Order order = Order.createOrder(userId);
         Order savedOrder = orderRepository.save(order);
-        List<OrderItem> orderItems = new ArrayList<>();
 
-        for (OrderItemDto orderItemDto : orderItemDtos) {
-            if (list.contains(orderItemDto.getProductId())) {
-                orderItems.add(OrderItem.createOrderItem(savedOrder, orderItemDto));
-            } else {
-                log.info("Product not found");
-                //TODO 상품이 존재하지 않을 경우 처리 로직
-            }
-        }
-
+        List<OrderItem> orderItems = OrderItem.createOrderItems(order, request.getOrderItems());
         orderItemRepository.saveAll(orderItems);
-        order.addOrderItems(orderItems);
+        savedOrder.addOrderItems(orderItems);
+
+        DeliveryMessage deliveryMessage = DeliveryMessage.entityToMessage(savedOrder);
+        rabbitTemplate.convertAndSend(queueProduct, deliveryMessage);
 
         return OrderResponseDto.entityToDto(savedOrder);
     }

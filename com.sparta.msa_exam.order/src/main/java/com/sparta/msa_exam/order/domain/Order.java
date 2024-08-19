@@ -43,10 +43,6 @@ public class Order {
                 .build();
     }
 
-    public void addOrderItems(List<OrderItem> orderItems) {
-        this.orderItems = orderItems;
-    }
-
     private static String createOrderName() {
 
         int randomSixNumber = (int) (Math.random() * 899999) + 100000;
@@ -54,5 +50,9 @@ public class Order {
         String today = sdf.format(new Date());
 
         return today + randomSixNumber;
+    }
+
+    public void addOrderItems(List<OrderItem> orderItems) {
+        this.orderItems = orderItems;
     }
 }

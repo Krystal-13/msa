@@ -24,7 +24,8 @@ public class OrderResponseDto {
     public static OrderResponseDto entityToDto(Order order) {
         return OrderResponseDto.builder()
                 .name(order.getName())
-                .productIds(order.getOrderItems().stream().map(OrderItem::getProductId).toList())
+                .productIds(order.getOrderItems().stream()
+                        .map(OrderItem::getProductId).toList())
                 .build();
     }
 }
