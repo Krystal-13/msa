@@ -1,6 +1,6 @@
 package com.sparta.msa_exam.product.dto;
 
-import com.sparta.msa_exam.product.Product;
+import com.sparta.msa_exam.product.domain.Product;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;

@@ -13,7 +13,7 @@ import java.security.interfaces.RSAPublicKey;
 
 @EnableWebFluxSecurity
 @Configuration
-public class GatewayConfig {
+public class GatewaySecurityConfig {
 
     @Value("${jwt.public.key}")
     private RSAPublicKey key;

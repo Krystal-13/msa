@@ -1,4 +1,4 @@
-package com.sparta.msa_exam.product;
+package com.sparta.msa_exam.product.domain;
 
 import com.sparta.msa_exam.product.dto.ProductRequestDto;
 import jakarta.persistence.*;

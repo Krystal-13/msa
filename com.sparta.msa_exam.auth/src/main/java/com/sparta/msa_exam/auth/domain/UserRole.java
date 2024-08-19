@@ -1,9 +1,10 @@
-package com.sparta.msa_exam.auth;
+package com.sparta.msa_exam.auth.domain;
 
 import lombok.Getter;
 
 @Getter
 public enum UserRole {
+    ROLE_GUEST("GUEST"),
     ROLE_USER("USER"),
     ROLE_SELLER("USER"),
     ROLE_ADMIN("ADMIN");

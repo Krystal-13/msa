@@ -1,5 +1,7 @@
 package com.sparta.msa_exam.gateway;
 
+import com.sparta.msa_exam.gateway.dto.AuthUserInfoRequest;
+import com.sparta.msa_exam.gateway.dto.AuthUserInfoResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
@@ -38,10 +40,10 @@ public class JwtAuthenticationFilter implements GlobalFilter {
             return exchange.getResponse().setComplete();
         }
 
-        AuthenticationDetails authDetails = getAuthDetails(token);
+        AuthUserInfoRequest authDetails = getAuthDetails(token);
 
         return authenticateUser(authDetails)
-                .flatMap(userExists -> modifyRequest(authDetails, exchange, chain))
+                .flatMap(AuthUserInfoResponse -> modifyRequest(AuthUserInfoResponse, exchange, chain))
                 .onErrorResume(e -> handleAuthenticationError(exchange));
     }
 
@@ -53,29 +55,28 @@ public class JwtAuthenticationFilter implements GlobalFilter {
         return null;
     }
 
-    private AuthenticationDetails getAuthDetails(String token) {
+    private AuthUserInfoRequest getAuthDetails(String token) {
         Jwt jwt = jwtDecoder.decode(token);
 
         String userId = jwt.getSubject();
-        String role = jwt.getClaim(SCOPE).toString();
+        String authority = jwt.getClaim(SCOPE).toString();
 
-        return new AuthenticationDetails(userId, role);
+        return new AuthUserInfoRequest(userId, authority);
     }
 
-    private Mono<Boolean> authenticateUser(AuthenticationDetails authDetails) {
+    private Mono<AuthUserInfoResponse> authenticateUser(AuthUserInfoRequest authDetails) {
 
         return webClient.post()
                 .uri("/auth/users/validate")
                 .bodyValue(authDetails)
                 .retrieve()
-                .bodyToMono(Boolean.class);
+                .bodyToMono(AuthUserInfoResponse.class);
     }
 
-    private Mono<Void> modifyRequest(AuthenticationDetails authDetails, ServerWebExchange exchange, GatewayFilterChain chain) {
-
+    private Mono<Void> modifyRequest(AuthUserInfoResponse userInfo, ServerWebExchange exchange, GatewayFilterChain chain) {
         ServerHttpRequest modifiedRequest = exchange.getRequest().mutate()
-                .header("X-User-Id", authDetails.getUserId())
-                .header("X-User-Role", authDetails.getRole())
+                .header("X-User-Id", userInfo.getUserId())
+                .header("X-User-Role", userInfo.getRole())
                 .build();
         return chain.filter(exchange.mutate().request(modifiedRequest).build());
     }

@@ -1,5 +1,7 @@
 package com.sparta.msa_exam.order;
 
+import com.sparta.msa_exam.order.domain.Order;
+import com.sparta.msa_exam.order.domain.OrderItem;
 import com.sparta.msa_exam.order.dto.OrderItemDto;
 import com.sparta.msa_exam.order.dto.OrderRequestDto;
 import com.sparta.msa_exam.order.dto.OrderResponseDto;

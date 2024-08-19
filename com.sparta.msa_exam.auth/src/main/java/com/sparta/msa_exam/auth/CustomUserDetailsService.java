@@ -1,6 +1,7 @@
 package com.sparta.msa_exam.auth;
 
-import com.sparta.msa_exam.auth.dto.SecretUserDto;
+import com.sparta.msa_exam.auth.dto.AuthUserInfo;
+import com.sparta.msa_exam.auth.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -26,7 +27,7 @@ public class CustomUserDetailsService implements UserDetailsService {
                         )
                 );
 
-        return new CustomUserDetails(SecretUserDto.EntityToDto(user));
+        return new CustomUserDetails(AuthUserInfo.EntityToDto(user));
     }
 
 }

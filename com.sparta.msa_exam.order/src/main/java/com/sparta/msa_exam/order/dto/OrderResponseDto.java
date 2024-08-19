@@ -1,7 +1,7 @@
 package com.sparta.msa_exam.order.dto;
 
-import com.sparta.msa_exam.order.Order;
-import com.sparta.msa_exam.order.OrderItem;
+import com.sparta.msa_exam.order.domain.Order;
+import com.sparta.msa_exam.order.domain.OrderItem;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

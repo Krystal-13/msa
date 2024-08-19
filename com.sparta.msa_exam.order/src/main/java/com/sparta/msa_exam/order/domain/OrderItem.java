@@ -1,4 +1,4 @@
-package com.sparta.msa_exam.order;
+package com.sparta.msa_exam.order.domain;
 
 import com.sparta.msa_exam.order.dto.OrderItemDto;
 import jakarta.persistence.*;

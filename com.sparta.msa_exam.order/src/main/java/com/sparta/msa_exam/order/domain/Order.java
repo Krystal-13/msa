@@ -1,4 +1,4 @@
-package com.sparta.msa_exam.order;
+package com.sparta.msa_exam.order.domain;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;

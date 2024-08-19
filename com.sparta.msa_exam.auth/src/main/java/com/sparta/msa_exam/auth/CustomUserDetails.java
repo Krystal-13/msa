@@ -1,6 +1,7 @@
 package com.sparta.msa_exam.auth;
 
-import com.sparta.msa_exam.auth.dto.SecretUserDto;
+import com.sparta.msa_exam.auth.dto.AuthUserInfo;
+import com.sparta.msa_exam.auth.domain.UserRole;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
@@ -14,33 +15,29 @@ import java.util.List;
 @NoArgsConstructor
 public class CustomUserDetails implements UserDetails {
 
-    private SecretUserDto secretUserDto;
+    private AuthUserInfo authUserInfo;
 
-    public CustomUserDetails(SecretUserDto secretUserDto) {
-        this.secretUserDto = secretUserDto;
+    public CustomUserDetails(AuthUserInfo authUserInfo) {
+        this.authUserInfo = authUserInfo;
     }
 
     private GrantedAuthority getAuthority(UserRole role) {
-        return new SimpleGrantedAuthority(role.name());
+        return new SimpleGrantedAuthority(role.getAuthority());
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        List<GrantedAuthority> authorityList =
-                List.of(getAuthority(secretUserDto.getRole()));
 
-        System.out.println(authorityList);
-
-        return authorityList;
+        return List.of(getAuthority(authUserInfo.getRole()));
     }
 
     @Override
     public String getPassword() {
-        return secretUserDto.getPassword();
+        return authUserInfo.getPassword();
     }
 
     @Override
     public String getUsername() {
-        return secretUserDto.getUsername();
+        return authUserInfo.getUsername();
     }
 }

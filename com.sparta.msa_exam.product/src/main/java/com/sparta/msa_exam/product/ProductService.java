@@ -1,5 +1,6 @@
 package com.sparta.msa_exam.product;
 
+import com.sparta.msa_exam.product.domain.Product;
 import com.sparta.msa_exam.product.dto.ProductRequestDto;
 import com.sparta.msa_exam.product.dto.ProductResponseDto;
 import lombok.RequiredArgsConstructor;

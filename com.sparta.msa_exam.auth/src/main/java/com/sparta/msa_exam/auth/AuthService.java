@@ -1,7 +1,9 @@
 package com.sparta.msa_exam.auth;
 
 
-import com.sparta.msa_exam.auth.dto.UserResponseDto;
+import com.sparta.msa_exam.auth.domain.User;
+import com.sparta.msa_exam.auth.dto.AuthUserInfoResponse;
+import com.sparta.msa_exam.auth.dto.AuthUserResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -44,7 +46,7 @@ public class AuthService {
         return createAccessToken(authenticate);
     }
 
-    public UserResponseDto signUp(String username, String password) {
+    public AuthUserResponse signUp(String username, String password) {
 
         if (userRepository.existsByUsername(username)) {
             throw new ResponseStatusException(
@@ -54,7 +56,7 @@ public class AuthService {
         User user = User.createUser(username, passwordEncoder.encode(password));
         User savedUser = userRepository.save(user);
 
-        return UserResponseDto.entityToDto(savedUser);
+        return AuthUserResponse.entityToDto(savedUser);
     }
 
     public String createAccessToken(Authentication authentication) {
@@ -76,9 +78,17 @@ public class AuthService {
         return this.encoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
     }
 
-    public boolean validateUserWithRole(String userId, String userRole) {
+    public AuthUserInfoResponse validateUserWithAuthority(String userId, String authority) {
 
-        return userRepository.existsByIdAndRole(
-                Long.valueOf(userId), UserRole.valueOf(userRole));
+        User user = userRepository.findById(Long.valueOf(userId))
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "User Not Found"));
+
+        if (!user.getRole().getAuthority().equals(authority)) {
+            throw new ResponseStatusException(
+                    HttpStatus.UNAUTHORIZED, "Unauthorized User");
+        }
+
+        return AuthUserInfoResponse.EntityToDto(user);
     }
 }

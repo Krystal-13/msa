@@ -1,4 +1,4 @@
-package com.sparta.msa_exam.auth;
+package com.sparta.msa_exam.auth.domain;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;

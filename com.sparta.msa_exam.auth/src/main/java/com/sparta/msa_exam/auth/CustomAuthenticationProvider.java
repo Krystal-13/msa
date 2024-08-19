@@ -36,7 +36,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
             verifyCredentials(authToken.getCredentials(), password);
 
             UsernamePasswordAuthenticationToken authenticated =
-                    UsernamePasswordAuthenticationToken.authenticated(
+                    new UsernamePasswordAuthenticationToken(
                     userDetails.getUsername(), password, userDetails.getAuthorities()
             );
 
