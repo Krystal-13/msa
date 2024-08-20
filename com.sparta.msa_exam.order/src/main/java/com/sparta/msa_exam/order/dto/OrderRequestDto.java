@@ -1,6 +1,5 @@
 package com.sparta.msa_exam.order.dto;
 
-import com.sparta.msa_exam.order.dto.OrderItemDto;
 import lombok.Getter;
 
 import java.util.List;

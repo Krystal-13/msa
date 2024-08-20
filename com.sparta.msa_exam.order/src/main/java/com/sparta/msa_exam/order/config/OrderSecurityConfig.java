@@ -1,6 +1,6 @@
-package com.sparta.msa_exam.order;
+package com.sparta.msa_exam.order.config;
 
-import com.sparta.msa_exam.product.UserContextFilter;
+import com.sparta.msa_exam.order.UserContextFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;

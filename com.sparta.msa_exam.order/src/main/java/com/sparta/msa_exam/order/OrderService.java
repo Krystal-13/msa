@@ -2,6 +2,7 @@ package com.sparta.msa_exam.order;
 
 import com.sparta.msa_exam.order.domain.Order;
 import com.sparta.msa_exam.order.domain.OrderItem;
+import com.sparta.msa_exam.order.dto.OrderDeliveryMessage;
 import com.sparta.msa_exam.order.dto.OrderItemDto;
 import com.sparta.msa_exam.order.dto.OrderRequestDto;
 import com.sparta.msa_exam.order.dto.OrderResponseDto;
@@ -42,8 +43,8 @@ public class OrderService {
         orderItemRepository.saveAll(orderItems);
         savedOrder.addOrderItems(orderItems);
 
-        DeliveryMessage deliveryMessage = DeliveryMessage.entityToMessage(savedOrder);
-        rabbitTemplate.convertAndSend(queueProduct, deliveryMessage);
+        OrderDeliveryMessage orderDeliveryMessage = OrderDeliveryMessage.entityToMessage(savedOrder);
+        rabbitTemplate.convertAndSend(queueProduct, orderDeliveryMessage);
 
         return OrderResponseDto.entityToDto(savedOrder);
     }
@@ -114,5 +115,18 @@ public class OrderService {
                     "Unauthorized access to the order"
             );
         }
+    }
+
+    @Transactional
+    public void handleErrorMessage(OrderDeliveryMessage orderDeliveryMessage) {
+
+        Optional<Order> optionalOrder = orderRepository.findById(orderDeliveryMessage.getOrderId());
+        if (optionalOrder.isEmpty()) {
+            log.info("orderId : " + orderDeliveryMessage.getOrderId() + " Not found");
+            return;
+        }
+
+        Order order = optionalOrder.get();
+        order.setOrderStatus(OrderStatus.CANCELLED);
     }
 }

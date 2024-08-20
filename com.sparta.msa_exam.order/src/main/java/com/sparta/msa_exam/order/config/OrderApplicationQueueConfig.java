@@ -1,4 +1,4 @@
-package com.sparta.msa_exam.order;
+package com.sparta.msa_exam.order.config;
 
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
