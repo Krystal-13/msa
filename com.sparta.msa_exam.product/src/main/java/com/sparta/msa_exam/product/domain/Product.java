@@ -37,4 +37,8 @@ public class Product {
                 .createdBy(userId)
                 .build();
     }
+
+    public void reduceStockQuantity(Integer quantity) {
+        this.stockQuantity -= quantity;
+    }
 }
