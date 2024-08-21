@@ -1,6 +1,5 @@
-package com.sparta.msa_exam.product.domain;
+package com.sparta.msa_exam.product.model;
 
-import com.sparta.msa_exam.product.dto.ProductRequestDto;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -29,11 +28,11 @@ public class Product {
         this.createdBy = createdBy;
     }
 
-    public static Product createProduct(ProductRequestDto request, String userId) {
+    public static Product createProduct(String name, Integer price, Integer quantity, String userId) {
         return Product.builder()
-                .name(request.getName())
-                .supplyPrice(request.getSupplyPrice())
-                .stockQuantity(request.getQuantity())
+                .name(name)
+                .supplyPrice(price)
+                .stockQuantity(quantity)
                 .createdBy(userId)
                 .build();
     }

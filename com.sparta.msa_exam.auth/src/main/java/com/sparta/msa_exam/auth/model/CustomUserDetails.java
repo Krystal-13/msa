@@ -1,7 +1,7 @@
-package com.sparta.msa_exam.auth;
+package com.sparta.msa_exam.auth.model;
 
-import com.sparta.msa_exam.auth.dto.AuthUserInfo;
-import com.sparta.msa_exam.auth.domain.UserRole;
+import com.sparta.msa_exam.auth.type.UserRole;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
@@ -15,10 +15,15 @@ import java.util.List;
 @NoArgsConstructor
 public class CustomUserDetails implements UserDetails {
 
-    private AuthUserInfo authUserInfo;
+    private String username;
+    private String password;
+    private UserRole role;
 
-    public CustomUserDetails(AuthUserInfo authUserInfo) {
-        this.authUserInfo = authUserInfo;
+    @Builder
+    public CustomUserDetails(String username, String password, UserRole role) {
+        this.username = username;
+        this.password = password;
+        this.role = role;
     }
 
     private GrantedAuthority getAuthority(UserRole role) {
@@ -28,16 +33,16 @@ public class CustomUserDetails implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
 
-        return List.of(getAuthority(authUserInfo.getRole()));
+        return List.of(getAuthority(role));
     }
 
     @Override
     public String getPassword() {
-        return authUserInfo.getPassword();
+        return password;
     }
 
     @Override
     public String getUsername() {
-        return authUserInfo.getUsername();
+        return username;
     }
 }

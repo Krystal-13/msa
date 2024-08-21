@@ -1,9 +1,10 @@
-package com.sparta.msa_exam.auth;
+package com.sparta.msa_exam.auth.service;
 
 
-import com.sparta.msa_exam.auth.domain.User;
+import com.sparta.msa_exam.auth.authentication.CustomAuthenticationProvider;
 import com.sparta.msa_exam.auth.dto.AuthUserInfoResponse;
-import com.sparta.msa_exam.auth.dto.AuthUserResponse;
+import com.sparta.msa_exam.auth.model.User;
+import com.sparta.msa_exam.auth.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -46,7 +47,7 @@ public class AuthService {
         return createAccessToken(authenticate);
     }
 
-    public AuthUserResponse signUp(String username, String password) {
+    public boolean signUp(String username, String password) {
 
         if (userRepository.existsByUsername(username)) {
             throw new ResponseStatusException(
@@ -56,7 +57,7 @@ public class AuthService {
         User user = User.createUser(username, passwordEncoder.encode(password));
         User savedUser = userRepository.save(user);
 
-        return AuthUserResponse.entityToDto(savedUser);
+        return true;
     }
 
     public String createAccessToken(Authentication authentication) {
@@ -89,6 +90,13 @@ public class AuthService {
                     HttpStatus.UNAUTHORIZED, "Unauthorized User");
         }
 
-        return AuthUserInfoResponse.EntityToDto(user);
+        return EntityToDto(user);
+    }
+
+    private AuthUserInfoResponse EntityToDto(User user) {
+        return AuthUserInfoResponse.builder()
+                .userId(String.valueOf(user.getId()))
+                .role(user.getRole().name())
+                .build();
     }
 }

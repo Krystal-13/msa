@@ -1,6 +1,5 @@
-package com.sparta.msa_exam.order.domain;
+package com.sparta.msa_exam.order.model;
 
-import com.sparta.msa_exam.order.dto.OrderItemDto;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -8,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Entity
 @Getter
@@ -32,19 +32,21 @@ public class OrderItem {
         this.quantity = quantity;
     }
 
-    public static OrderItem createOrderItem(Order order, OrderItemDto orderItemDto) {
+    public static OrderItem createOrderItem(Order order, Long productId, Integer quantity) {
         return OrderItem.builder()
                 .order(order)
-                .productId(orderItemDto.getProductId())
-                .quantity(orderItemDto.getQuantity())
+                .productId(productId)
+                .quantity(quantity)
                 .build();
     }
 
-    public static List<OrderItem> createOrderItems(Order order, List<OrderItemDto> orderItemDtos) {
+    public static List<OrderItem> createOrderItems(Order order, Map<Long, Integer> map) {
         List<OrderItem> orderItems = new ArrayList<>();
 
-        for (OrderItemDto orderItemDto : orderItemDtos) {
-            orderItems.add(createOrderItem(order, orderItemDto));
+        for (Map.Entry<Long, Integer> entry : map.entrySet()) {
+            Long productId = entry.getKey();
+            Integer quantity = entry.getValue();
+            orderItems.add(createOrderItem(order, productId, quantity));
         }
 
         return orderItems;
