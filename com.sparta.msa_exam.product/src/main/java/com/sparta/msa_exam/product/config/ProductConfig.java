@@ -1,8 +1,9 @@
-package com.sparta.msa_exam.order.config;
+package com.sparta.msa_exam.product.config;
 
-import com.sparta.msa_exam.order.SecurityContextUserFilter;
+import com.sparta.msa_exam.product.SecurityContextUserFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -10,7 +11,8 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
-public class OrderSecurityConfig {
+@EnableMethodSecurity
+public class ProductConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
