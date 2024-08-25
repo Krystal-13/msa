@@ -21,6 +21,10 @@ spring:
           uri: lb://auth-service
           predicates:
             - Path=/auth/**
+        - id: payment-service
+          uri: lb://payment-service
+          predicates:
+            - Path=/payments/**
       discovery:
         locator:
           enabled: true
