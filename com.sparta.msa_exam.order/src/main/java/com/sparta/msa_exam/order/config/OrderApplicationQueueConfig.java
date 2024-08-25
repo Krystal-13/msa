@@ -15,6 +15,9 @@ public class OrderApplicationQueueConfig {
     @Value("${messaging.exchanges.default}")
     private String exchange;
 
+    @Value("${messaging.queues.order}")
+    private String queueOrder;
+
     @Value("${messaging.queues.product}")
     private String queueProduct;
 
@@ -31,6 +34,12 @@ public class OrderApplicationQueueConfig {
 
     @Bean
     public TopicExchange exchange() { return new TopicExchange(exchange);}
+    @Bean
+    public Queue queueOrder() { return new Queue(queueOrder);}
+    @Bean
+    public Binding bindingOrder() {
+        return BindingBuilder.bind(queueOrder()).to(exchange()).with(queueOrder);
+    }
     @Bean
     public Queue queueProduct() { return new Queue(queueProduct);}
     @Bean

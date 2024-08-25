@@ -33,6 +33,7 @@ messaging:
     default: msa.exam
     error: msa.exam.error
   queues:
+    order: msa.exam.order
     product: msa.exam.product
     orderError: msa.exam.error.order
 

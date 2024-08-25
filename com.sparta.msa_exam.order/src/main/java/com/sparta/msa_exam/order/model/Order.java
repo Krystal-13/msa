@@ -22,32 +22,35 @@ public class Order {
 
     private String name;
 
-    @OneToMany(mappedBy = "order")
+    @OneToMany(mappedBy = "order", fetch = FetchType.LAZY)
     private List<OrderItem> orderItems = new ArrayList<>();
 
     private String userId;
 
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
+    private Integer totalPrice;
 
     @Builder(access = AccessLevel.PRIVATE)
-    public Order(String name, List<OrderItem> orderItems, String userId, OrderStatus orderStatus) {
+    public Order(String name, List<OrderItem> orderItems, String userId, OrderStatus orderStatus, Integer totalPrice) {
         this.name = name;
         this.orderItems = orderItems;
         this.userId = userId;
         this.orderStatus = orderStatus;
+        this.totalPrice = totalPrice;
     }
 
     public static Order createOrder(String userId, String name) {
         return Order.builder()
                 .name(name)
                 .userId(userId)
-                .orderStatus(OrderStatus.PENDING)
                 .build();
     }
 
-    public void addOrderItems(List<OrderItem> orderItems) {
+    public void setupOrder(List<OrderItem> orderItems, Integer totalPrice) {
         this.orderItems = orderItems;
+        this.totalPrice = totalPrice;
+        this.orderStatus = OrderStatus.PENDING;
     }
 
     public void setOrderStatus(OrderStatus orderStatus) {
