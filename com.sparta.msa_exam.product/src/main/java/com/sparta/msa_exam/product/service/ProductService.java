@@ -1,11 +1,8 @@
 package com.sparta.msa_exam.product.service;
 
-import com.sparta.msa_exam.product.dto.OrderItemDto;
+import com.sparta.msa_exam.product.dto.*;
 import com.sparta.msa_exam.product.repository.ProductRepository;
-import com.sparta.msa_exam.product.dto.ProductDeliveryMessage;
 import com.sparta.msa_exam.product.model.Product;
-import com.sparta.msa_exam.product.dto.ProductRequest;
-import com.sparta.msa_exam.product.dto.ProductResponse;
 import com.sparta.msa_exam.product.type.ErrorType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -56,9 +54,30 @@ public class ProductService {
         return products.stream().map(this::productToDto).toList();
     }
 
+    @Transactional(readOnly = true)
+    public List<ProductItemResponse> validateAndGetProductInfo(List<ProductItemDto> request) {
+
+        List<ProductItemResponse> productItemResponse = new ArrayList<>();
+        for (ProductItemDto orderItem : request) {
+            Long productId = orderItem.getProductId();
+            Integer quantity = orderItem.getQuantity();
+
+            Product product = productRepository.findById(productId).orElseThrow(() ->
+                    new ResponseStatusException(HttpStatus.NOT_FOUND)
+            );
+
+            if (quantity > product.getStockQuantity()) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+            }
+
+            productItemResponse.add(productToOrderItemDto(product));
+        }
+        return productItemResponse;
+    }
+
     @Transactional
     public void reduceProductQuantity(ProductDeliveryMessage productDeliveryMessage) {
-        for (OrderItemDto orderItem : productDeliveryMessage.getOrderItems()) {
+        for (ProductItemDto orderItem : productDeliveryMessage.getOrderItems()) {
             Long productId = orderItem.getProductId();
             Integer quantity = orderItem.getQuantity();
 
@@ -79,7 +98,6 @@ public class ProductService {
             product.reduceStockQuantity(quantity);
         }
     }
-
     public void rollbackToOrder(ProductDeliveryMessage productDeliveryMessage,
                                  ErrorType errorType
     ) {
@@ -94,6 +112,14 @@ public class ProductService {
                 .name(product.getName())
                 .supplyPrice(product.getSupplyPrice())
                 .quantity(product.getStockQuantity())
+                .build();
+    }
+
+    private ProductItemResponse productToOrderItemDto(Product product) {
+
+        return ProductItemResponse.builder()
+                .productId(product.getId())
+                .supplyPrice((product.getSupplyPrice()))
                 .build();
     }
 }

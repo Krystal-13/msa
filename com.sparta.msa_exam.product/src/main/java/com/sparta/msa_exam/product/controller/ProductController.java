@@ -1,8 +1,7 @@
 package com.sparta.msa_exam.product.controller;
 
+import com.sparta.msa_exam.product.dto.*;
 import com.sparta.msa_exam.product.service.ProductService;
-import com.sparta.msa_exam.product.dto.ProductRequest;
-import com.sparta.msa_exam.product.dto.ProductResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -27,5 +26,11 @@ public class ProductController {
     @GetMapping
     public List<ProductResponse> getProducts() {
         return productService.getProducts();
+    }
+
+    @PostMapping("/verify")
+    public List<ProductItemResponse> validateAndGetProductInfo(
+            @RequestBody ProductOrderValidationRequest request) {
+        return productService.validateAndGetProductInfo(request.getOrderItems());
     }
 }
