@@ -12,8 +12,11 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
+
+import java.time.Instant;
 
 @Slf4j
 @Component
@@ -57,6 +60,10 @@ public class JwtAuthenticationFilter implements GlobalFilter {
 
     private AuthUserInfoRequest getAuthDetails(String token) {
         Jwt jwt = jwtDecoder.decode(token);
+
+        if (jwt.getExpiresAt() == null || jwt.getExpiresAt().isBefore(Instant.now())) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+        }
 
         String userId = jwt.getSubject();
         String authority = jwt.getClaim(SCOPE).toString();
